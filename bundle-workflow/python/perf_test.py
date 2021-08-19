@@ -11,6 +11,7 @@ parser = argparse.ArgumentParser(description = "Test an OpenSearch Bundle")
 parser.add_argument('manifest', type = argparse.FileType('r'), help = "Manifest file.")
 parser.add_argument('--keep', dest = 'keep', action='store_true', help = "Do not delete the working temporary directory.")
 parser.add_argument('--stack', dest = 'stack', help = 'Stack name for performance test')
+parser.add_argument("--security", dest="security", action='store_true', help = "Security of the cluster should be True/False")
 parser.add_argument('config', type = argparse.FileType('r'), help = "Config file.")
 args = parser.parse_args()
 
@@ -24,7 +25,8 @@ with TemporaryDirectory(keep = args.keep) as work_dir:
     
     #Spin up a single node cluster for performance test
     cloned_repo = GitRepository('https://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:x-oauth-basic@github.com/opensearch-project/opensearch-infra', 'main', 'opensearch')
-    perf_cluster = PerformanceTestCluster(manifest, config, args.stack)
+    security = True if args.security else False
+    perf_cluster = PerformanceTestCluster(manifest, config, args.stack, security)
     perf_cluster.create()
 
     perf_test_suite = PerformanceTestSuite(manifest)
