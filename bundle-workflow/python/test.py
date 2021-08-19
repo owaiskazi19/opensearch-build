@@ -5,8 +5,6 @@ import argparse
 from manifests.bundle_manifest import BundleManifest
 from git.git_repository import GitRepository
 from test_workflow.local_test_cluster import LocalTestCluster
-from git.git_clone import GitClone
-from test_workflow.perf_test_cluster import PerformanceTestCluster
 from test_workflow.integ_test_suite import IntegTestSuite
 from paths.script_finder import ScriptFinder
 from system.temporary_directory import TemporaryDirectory
@@ -14,7 +12,6 @@ from system.temporary_directory import TemporaryDirectory
 parser = argparse.ArgumentParser(description = "Test an OpenSearch Bundle")
 parser.add_argument('manifest', type = argparse.FileType('r'), help = "Manifest file.")
 parser.add_argument('--keep', dest = 'keep', action='store_true', help = "Do not delete the working temporary directory.")
-parser.add_argument('--stack', dest = 'stack', help = 'Stack name for performance test')
 args = parser.parse_args()
 
 manifest = BundleManifest.from_file(args.manifest)
@@ -38,10 +35,4 @@ with TemporaryDirectory(keep = args.keep) as work_dir:
     finally:
         cluster.destroy()
     
-    #Spin up a single node cluster for performance test
-
-    cloned_repo = GitClone('https://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:x-oauth-basic@github.com/owaiskazi19/opensearch-infra', 'opensearch')
-    perf_cluster = PerformanceTestCluster(manifest, args.stack)
-    perf_cluster.create()
-
     # TODO: Store test results, send notification.

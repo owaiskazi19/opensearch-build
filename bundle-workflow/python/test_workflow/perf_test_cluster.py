@@ -1,23 +1,25 @@
 import os
-import tempfile
-import urllib.request
-import shutil
 import subprocess
 import json
+import yaml
+from test_workflow.test_cluster import TestCluster
 
-class PerformanceTestCluster:
-    def __init__(self, bundle_manifest, stack_name):
+class PerformanceTestCluster(TestCluster):
+    def __init__(self, bundle_manifest, config, stack_name):
         self.manifest = bundle_manifest
-        self.work_dir = 'opensearch/opensearch-infra/tools/cdk/mensor/single-node/'
+        self.security_id = config['Constants']['SecurityGroupId']
+        self.vpc_id = config['Constants']['VpcId']
+        self.account_id = config['Constants']['AccountId']
+        self.region = config['Constants']['Region']
+        self.work_dir = 'opensearch/tools/cdk/mensor/single-node/'
         self.stack_name = stack_name
         self.output_file = 'output.json'
         self.ip_address = ''
 
-    def create(self):       
+    def create(self):
         os.chdir(self.work_dir)
         dir = os.getcwd()
-        
-        command = f'cdk deploy --all -c url={self.manifest.build.location} -c security_group_id=sg-0368b2d37e229645b -c vpc_id=vpc-f6b57d8f -c account_id=724293578735 -c region=eu-west-1 -c stack_name={self.stack_name} -c security=disable -c architecture={self.manifest.build.architecture} --profile infra --outputs-file {self.output_file}'
+        command = f'cdk deploy --all -c url={self.manifest.build.location} -c security_group_id={self.security_id} -c vpc_id={self.vpc_id} -c account_id={self.account_id} -c region={self.region} -c stack_name={self.stack_name} -c security=disable -c architecture={self.manifest.build.architecture} --profile infra --outputs-file {self.output_file}'
         print(f'Executing "{command}" in {dir}')
         subprocess.check_call(command, cwd=dir, shell=True)
         print(os.listdir())
@@ -33,6 +35,6 @@ class PerformanceTestCluster:
         return 9200
 
     def destroy(self):
-        command = f'cdk destroy --all -c url={self.manifest.build.location} -c security_group_id=sg-0368b2d37e229645b -c vpc_id=vpc-f6b57d8f -c account_id=724293578735 -c region=eu-west-1 -c stack_name={self.stack_name} -c security=disable -c architecture={self.manifest.build.architecture} --profile infra --outputs-file {self.output_file}'
+        command = f'cdk destroy --all -c url={self.manifest.build.location} -c security_group_id={self.security_id} -c vpc_id={self.vpc_id} -c account_id={self.account_id} -c region={self.region} -c stack_name={self.stack_name} -c security=disable -c architecture={self.manifest.build.architecture} --profile infra --outputs-file {self.output_file}'
         print(f'Executing "{command}" in {dir}')
         subprocess.check_call(command, cwd=dir, shell=True)
