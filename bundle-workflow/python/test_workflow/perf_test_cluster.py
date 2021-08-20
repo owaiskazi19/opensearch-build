@@ -28,7 +28,7 @@ class PerformanceTestCluster(TestCluster):
         command = f'cdk deploy --all -c url={self.manifest.build.location} -c security_group_id={self.security_id} -c vpc_id={self.vpc_id} -c account_id={self.account_id} -c region={self.region} -c stack_name={self.stack_name} -c security={security} -c architecture={self.manifest.build.architecture} --profile infra --outputs-file {self.output_file}'
         print(f'Executing "{command}" in {dir}')
         subprocess.check_call(command, cwd=dir, shell=True)
-        with open('output.json', 'r') as read_file:
+        with open(self.output_file, 'r') as read_file:
             load_output = json.load(read_file)
         self.ip_address = load_output[self.stack_name]['PrivateIp']
         print('Private IP:', self.ip_address)
