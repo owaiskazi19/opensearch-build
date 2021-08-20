@@ -24,7 +24,7 @@ with TemporaryDirectory(keep = args.keep) as work_dir:
     os.chdir(work_dir)
     
     #Spin up a single node cluster for performance test
-    cloned_repo = GitRepository('https://github.com/opensearch-project/opensearch-infra', 'main', 'opensearch')
+    cloned_repo = GitRepository('https://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:x-oauth-basic@github.com/opensearch-project/opensearch-infra', 'main', 'opensearch')
     security = True if args.security else False
     perf_cluster = PerformanceTestCluster(manifest, config, args.stack, security)
     perf_cluster.create()

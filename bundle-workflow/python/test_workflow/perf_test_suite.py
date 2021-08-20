@@ -27,4 +27,4 @@ class PerformanceTestSuite:
         #Set PYHTONPATH variable
         sys.path.append(str(root_dir) + '/mensor-py-client/mensor')
 
-        subprocess.check_call(f'python3 test_config.py -i {cluster.endpoint()} -b 12212 -a {self.manifest.build.architecture}', cwd=dir, shell=True)
+        subprocess.check_call(f'python3 test_config.py -i {cluster.endpoint()} -b 12212 -a {self.manifest.build.architecture} -s', cwd=dir, shell=True)
