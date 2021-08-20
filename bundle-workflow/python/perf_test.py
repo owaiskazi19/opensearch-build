@@ -13,6 +13,8 @@ parser.add_argument('--keep', dest = 'keep', action='store_true', help = "Do not
 parser.add_argument('--stack', dest = 'stack', help = 'Stack name for performance test')
 parser.add_argument("--security", dest="security", action='store_true', help = "Security of the cluster should be True/False")
 parser.add_argument('config', type = argparse.FileType('r'), help = "Config file.")
+#REMOVE THIS
+parser.add_argument("-t", '--token', help="Github Token")
 args = parser.parse_args()
 
 manifest = BundleManifest.from_file(args.manifest)
@@ -24,7 +26,7 @@ with TemporaryDirectory(keep = args.keep) as work_dir:
     os.chdir(work_dir)
     
     #Spin up a single node cluster for performance test
-    cloned_repo = GitRepository('https://github.com/opensearch-project/opensearch-infra', 'main', 'opensearch')
+    cloned_repo = GitRepository(f'https://{args.token}:x-oauth-basic@github.com/opensearch-project/opensearch-infra', 'main', 'opensearch')
     security = True if args.security else False
     perf_cluster = PerformanceTestCluster(manifest, config, args.stack, security)
     perf_cluster.create()
