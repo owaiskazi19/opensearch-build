@@ -34,7 +34,7 @@ class PerformanceTestCluster(TestCluster):
         # Assume the Infra Testing Account
         sts_credentials = sts_client.assume_role(
         RoleArn="arn:aws:iam::724293578735:role/cfn-set-up",
-        RoleSessionName="Spin up performance test cluster",
+        RoleSessionName="Spin-up-performance-test-cluster",
         DurationSeconds=3600)['Credentials']
 
 
