@@ -4,6 +4,9 @@ import json
 import yaml
 from aws_requests_auth.aws_auth import AWSRequestsAuth
 import boto3
+from boto3.session import Session
+from typing import Optional
+from botocore.credentials import AssumeRoleCredentialFetcher, DeferredRefreshableCredentials
 from test_workflow.test_cluster import TestCluster
 
 class PerformanceTestCluster(TestCluster):
@@ -19,6 +22,7 @@ class PerformanceTestCluster(TestCluster):
         self.ip_address = None
         self.security = security
 
+
     def create(self):
         os.chdir(self.work_dir)
         dir = os.getcwd()
@@ -27,32 +31,24 @@ class PerformanceTestCluster(TestCluster):
         if self.security:
             security = 'enable'
 
-        # boto3.set_stream_logger('')
-        # Get the built-in boto3 client for STS
-        sts_client = boto3.client('sts')
+        # client = boto3.client('sts')
+        # account_id = client.get_caller_identity()["Account"]
+        # print("Account id", account_id)
+        
+        # response = client.assume_role(RoleArn="arn:aws:iam::724293578735:role/cfn-set-up", RoleSessionName="Spin-up-performance-test-cluster")
+        
+        # session = Session(aws_access_key_id=response['Credentials']['AccessKeyId'],
+        #                 aws_secret_access_key=response['Credentials']['SecretAccessKey'],
+        #                 aws_session_token=response['Credentials']['SessionToken'],
+        #                 region_name= self.region)
+        
+        # client = session.client('sts')
+        # assumed_account_id = client.get_caller_identity()["Account"]
+        # print ("Assumed role", assumed_account_id)
 
-        # Assume the Infra Testing Account
-        sts_credentials = sts_client.assume_role(
-        RoleArn="arn:aws:iam::724293578735:role/cfn-set-up",
-        RoleSessionName="Spin-up-performance-test-cluster",
-        DurationSeconds=3600)['Credentials']
+        subprocess.check_call('./assume_role.sh arn:aws:iam::724293578735:role/cfn-set-up infra', cwd=dir, shell=True)
 
-
-        assumed_role_session = boto3.Session(
-            aws_access_key_id=sts_credentials['AccessKeyId'],
-            aws_secret_access_key=sts_credentials['SecretAccessKey'],
-            aws_session_token=sts_credentials["SessionToken"],
-            #aws_region=self.region,
-        )
-
-        # authorization = AWSRequestsAuth(aws_access_key=sts_credentials['AccessKeyId'],
-        #                             aws_secret_access_key=sts_credentials['SecretAccessKey'],
-        #                             aws_token=sts_credentials['SessionToken'],
-        #                             #aws_host=MENSOR_ENDPOINT,
-        #                             aws_region=self.region,
-        #                             aws_service='cluster')
-
-        command = f'cdk deploy --all -c url={self.manifest.build.location} -c security_group_id={self.security_id} -c vpc_id={self.vpc_id} -c account_id={self.account_id} -c region={self.region} -c stack_name={self.stack_name} -c security={security} -c architecture={self.manifest.build.architecture} --outputs-file {self.output_file}'
+        command = f'cdk deploy --all -c url={self.manifest.build.location} -c security_group_id={self.security_id} -c vpc_id={self.vpc_id} -c account_id={self.account_id} -c region={self.region} -c stack_name={self.stack_name} -c security={security} -c architecture={self.manifest.build.architecture} --profile infra --outputs-file {self.output_file}'
         print(f'Executing "{command}" in {dir}')
         subprocess.check_call(command, cwd=dir, shell=True)
         with open(self.output_file, 'r') as read_file:
