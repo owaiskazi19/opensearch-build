@@ -31,23 +31,6 @@ class PerformanceTestCluster(TestCluster):
         if self.security:
             security = 'enable'
 
-        # client = boto3.client('sts')
-        # account_id = client.get_caller_identity()["Account"]
-        # print("Account id", account_id)
-        
-        # response = client.assume_role(RoleArn="arn:aws:iam::724293578735:role/cfn-set-up", RoleSessionName="Spin-up-performance-test-cluster")
-        
-        # session = Session(aws_access_key_id=response['Credentials']['AccessKeyId'],
-        #                 aws_secret_access_key=response['Credentials']['SecretAccessKey'],
-        #                 aws_session_token=response['Credentials']['SessionToken'],
-        #                 region_name= self.region)
-        
-        # client = session.client('sts')
-        # assumed_account_id = client.get_caller_identity()["Account"]
-        # print ("Assumed role", assumed_account_id)
-
-        subprocess.check_call('./assume_role.sh arn:aws:iam::724293578735:role/cfn-set-up infra', cwd=dir, shell=True)
-
         command = f'cdk deploy --all -c url={self.manifest.build.location} -c security_group_id={self.security_id} -c vpc_id={self.vpc_id} -c account_id={self.account_id} -c region={self.region} -c stack_name={self.stack_name} -c security={security} -c architecture={self.manifest.build.architecture} --profile infra --outputs-file {self.output_file}'
         print(f'Executing "{command}" in {dir}')
         subprocess.check_call(command, cwd=dir, shell=True)
