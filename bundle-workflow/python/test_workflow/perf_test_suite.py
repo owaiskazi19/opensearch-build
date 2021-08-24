@@ -16,6 +16,9 @@ class PerformanceTestSuite:
         os.chdir(self.work_dir)
         dir = os.getcwd()
        
+        #Install the depedencies for the private repo
+        subprocess.check_call('pip3 install boto3 requests setuptools retry dataclasses_json', cwd=dir, shell=True)
+
         if self.security:
             subprocess.check_call(f'python3 test_config.py -i {self.endpoint} -b {self.manifest.build.id} -a {self.manifest.build.architecture} -s', cwd=dir, shell=True)
         else:
