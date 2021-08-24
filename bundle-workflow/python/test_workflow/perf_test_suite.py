@@ -4,49 +4,23 @@ import sys
 from pathlib import Path
 
 class PerformanceTestSuite:
-    def __init__(self, bundle_manifest):
+    def __init__(self, bundle_manifest, endpoint, security):
         self.manifest = bundle_manifest
         self.work_dir = 'tools/cdk/mensor/mensor_tests'
-        self.mensor_dir = '/opensearch/mensor-py-client'
+        self.endpoint = endpoint
+        self.security = security
 
     
-    def execute(self, cluster, current_dir, python_path):
-        print(os.listdir())
-        print(os.getcwd())
-        # root_dir = Path(os.getcwd()).parent.parent.parent.parent
-        # print(root_dir)
-        #current_path = Path(os.getcwd())
-        #print(current_path.parent)
-        #print(os.listdir())
-        #os.chdir('opensearch')
-        #print(os.listdir)
-
-        # #Set PYHTONPATH variable
-        # path_to_mensor_sdk = current_dir + self.mensor_dir
-        # print(path_to_mensor_sdk)
-        # #subprocess.check_call(f'export PYTHONPATH="$PYTHON{path_to_mensor_sdk}"', cwd=dir, shell=True)
-        # #print("subprocess", os.environ)
-        # sys.path.append(path_to_mensor_sdk)
-        # print(sys.path)
-     
-        # os.environ['PYTHONPATH'] = path_to_mensor_sdk
+    def execute(self):
         
-        # print("env", os.environ)
-
-        # os.chdir(os.getcwd()+ self.work_dir)
-        #print (os.environ)
-        print(python_path)
-        sys.path.append(python_path)
-        print(sys.path)
+        #Append PYTHONPATH
+        #sys.path.append(os.getenv('PYTHONPATH'))
         
-        # print(os.listdir())
         os.chdir(self.work_dir)
-        print(os.listdir())
         dir = os.getcwd()
        
-        #Install the depedencies
-        subprocess.check_call('pip3 install boto3 requests setuptools retry dataclasses_json', cwd=dir, shell=True)
-
+        if self.security:
+            subprocess.check_call(f'python3 test_config.py -i {self.endpoint} -b 12212 -a {self.manifest.build.architecture} -s', cwd=dir, shell=True)
+        else:
+            subprocess.check_call(f'python3 test_config.py -i {self.endpoint} -b 12212 -a {self.manifest.build.architecture}', cwd=dir, shell=True)
         
-
-        subprocess.check_call(f'python3 test_config.py -i 172.31.50.10 -b 12212 -a {self.manifest.build.architecture} -s', cwd=dir, shell=True)

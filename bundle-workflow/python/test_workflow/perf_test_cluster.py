@@ -16,7 +16,7 @@ class PerformanceTestCluster(TestCluster):
         self.vpc_id = config['Constants']['VpcId']
         self.account_id = config['Constants']['AccountId']
         self.region = config['Constants']['Region']
-        self.work_dir = 'opensearch/tools/cdk/mensor/single-node/'
+        self.work_dir = 'tools/cdk/mensor/single-node/'
         self.stack_name = stack_name
         self.output_file = 'output.json'
         self.ip_address = None
@@ -31,7 +31,7 @@ class PerformanceTestCluster(TestCluster):
         if self.security:
             security = 'enable'
 
-        command = f'cdk deploy --all -c url={self.manifest.build.location} -c security_group_id={self.security_id} -c vpc_id={self.vpc_id} -c account_id={self.account_id} -c region={self.region} -c stack_name={self.stack_name} -c security={security} -c architecture={self.manifest.build.architecture} --profile infra --outputs-file {self.output_file}'
+        command = f'cdk deploy --all -c url={self.manifest.build.location} -c security_group_id={self.security_id} -c vpc_id={self.vpc_id} -c account_id={self.account_id} -c region={self.region} -c stack_name={self.stack_name} -c security={security} -c architecture={self.manifest.build.architecture} --require-approval=never --profile infra --outputs-file {self.output_file}'
         print(f'Executing "{command}" in {dir}')
         subprocess.check_call(command, cwd=dir, shell=True)
         with open(self.output_file, 'r') as read_file:
