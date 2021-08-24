@@ -13,14 +13,11 @@ class PerformanceTestSuite:
     
     def execute(self):
         
-        #Append PYTHONPATH
-        #sys.path.append(os.getenv('PYTHONPATH'))
-        
         os.chdir(self.work_dir)
         dir = os.getcwd()
        
         if self.security:
-            subprocess.check_call(f'python3 test_config.py -i {self.endpoint} -b 12212 -a {self.manifest.build.architecture} -s', cwd=dir, shell=True)
+            subprocess.check_call(f'python3 test_config.py -i {self.endpoint} -b {self.manifest.build.id} -a {self.manifest.build.architecture} -s', cwd=dir, shell=True)
         else:
-            subprocess.check_call(f'python3 test_config.py -i {self.endpoint} -b 12212 -a {self.manifest.build.architecture}', cwd=dir, shell=True)
+            subprocess.check_call(f'python3 test_config.py -i {self.endpoint} -b {self.manifest.build.id} -a {self.manifest.build.architecture}', cwd=dir, shell=True)
         
