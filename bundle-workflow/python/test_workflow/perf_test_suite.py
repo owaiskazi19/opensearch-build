@@ -6,7 +6,7 @@ from pathlib import Path
 class PerformanceTestSuite:
     def __init__(self, bundle_manifest):
         self.manifest = bundle_manifest
-        self.work_dir = '/opensearch/tools/cdk/mensor/mensor_tests'
+        self.work_dir = 'tools/cdk/mensor/mensor_tests'
         self.mensor_dir = '/opensearch/mensor-py-client'
 
     

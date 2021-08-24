@@ -34,7 +34,7 @@ with TemporaryDirectory(keep = args.keep) as work_dir:
     #print(os.listdir())
     #Spin up a single node cluster for performance test
     print(os.getenv('WORKSPACE'))
-    current_workspace = os.path.join(workspace, 'infra15')
+    current_workspace = os.path.join(workspace, 'infra18')
     cloned_repo = GitRepository(f'https://{args.token}:x-oauth-basic@github.com/opensearch-project/opensearch-infra', 'main', current_workspace)
 
     print(os.listdir())
