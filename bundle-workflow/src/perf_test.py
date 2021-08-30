@@ -21,13 +21,13 @@ config = yaml.load(args.config, Loader=yaml.FullLoader)
 
 def get_infra_repo_url():
     if "GITHUB_TOKEN" in os.environ:
-        return "https://${GITHUB_TOKEN}@github.com/opensearch-project/opensearch-infra.git"
-    return "https://github.com/opensearch-project/opensearch-infra.git"
+        return "https://${GITHUB_TOKEN}@github.com/owaiskazi19/opensearch-infra.git"
+    return "https://github.com/owaiskazi19/opensearch-infra.git"
 
 
 os.chdir(os.getcwd())
-current_workspace = os.path.join(os.getcwd(), 'infra')
-cloned_repo = GitRepository(get_infra_repo_url(), 'main', current_workspace)
+current_workspace = os.path.join(os.getcwd(), 'infra91')
+cloned_repo = GitRepository(get_infra_repo_url(), 'integarte-pipfile', current_workspace)
 security = False
 for component in manifest.components:
     if component.name == 'security':
@@ -44,4 +44,4 @@ try:
     perf_test_suite.execute()
 finally:
     os.chdir(current_workspace)
-    perf_cluster.destroy()
+    #perf_cluster.destroy()

@@ -12,6 +12,7 @@ isort = "~=5.9"
 flake8 = "~=3.9"
 mypy = "~=0.9"
 pytest = "*"
+aws_requests_auth = "~=0.4"
 
 [dev-packages]
 
