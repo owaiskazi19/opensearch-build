@@ -18,6 +18,7 @@ from system.temporary_directory import TemporaryDirectory
 from test_workflow.integ_test.integ_test_suite import IntegTestSuite
 from test_workflow.utils.build_manifest_provider import BuildManifestProvider
 from test_workflow.utils.bundle_manifest_provider import BundleManifestProvider
+from test_workflow.dependency_installer import DependencyInstaller
 
 # TODO: 1. log test related logging into a log file. Output only workflow logs on shell.
 # TODO: 2. Move common functions to utils.py
@@ -75,13 +76,14 @@ def pull_common_dependencies(work_dir, build_manifest):
             GitRepository(
                 component.repository,
                 component.commit_id,
-                os.path.join(work_dir, component.name),
+                os.path.join(work_dir,'dependencies', component.name),
             )
 
 
 # TODO: replace with DependencyProvider - https://github.com/opensearch-project/opensearch-build/issues/283
 def sync_dependencies_to_maven_local(work_dir, manifest_build_ver):
-    os.chdir(work_dir + "/OpenSearch")
+    dependencies_dir = os.path.join(work_dir, 'dependencies')
+    os.chdir(dependencies_dir + "/OpenSearch")
     deps_script = os.path.join(
         work_dir,
         "opensearch-build/tools/standard-test/integtest_dependencies_opensearch.sh",
@@ -92,7 +94,7 @@ def sync_dependencies_to_maven_local(work_dir, manifest_build_ver):
         check=True,
         capture_output=True,
     )
-    os.chdir(work_dir + "/common-utils")
+    os.chdir(dependencies_dir + "/common-utils")
     subprocess.run(
         f"{deps_script} common-utils {manifest_build_ver}",
         shell=True,

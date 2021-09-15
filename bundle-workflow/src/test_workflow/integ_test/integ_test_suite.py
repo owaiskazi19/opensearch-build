@@ -30,7 +30,7 @@ class IntegTestSuite:
         self.repo = GitRepository(
             self.component.repository,
             self.component.commit_id,
-            os.path.join(self.work_dir, self.component.name),
+            os.path.join(self.work_dir, 'dependencies', self.component.name),
         )
 
     def execute(self):
@@ -40,15 +40,16 @@ class IntegTestSuite:
 
     # TODO: fetch pre-built dependencies from s3
     def _fetch_plugin_specific_dependencies(self):
+        dependencies_dir = os.path.join(self.work_dir, 'dependencies')
         os.chdir(self.work_dir)
         subprocess.run(
-            "cp opensearch-build/bundle-workflow/scripts/default/integtest.sh " + self.component.name, shell=True, check=True
+            "cp opensearch-build/bundle-workflow/scripts/default/integtest.sh " + dependencies_dir + "/" + self.component.name, shell=True, check=True
         )
-        os.chdir(self.work_dir)
+        os.chdir(dependencies_dir)
         subprocess.run(
             "cp -r job-scheduler " + self.component.name, shell=True, check=True
         )
-        os.chdir(self.work_dir + "/" + self.component.name + "/job-scheduler")
+        os.chdir(dependencies_dir + "/" + self.component.name + "/job-scheduler")
         deps_script = os.path.join(
             self.work_dir,
             "opensearch-build/tools/standard-test/integtest_dependencies_opensearch.sh",
@@ -59,9 +60,10 @@ class IntegTestSuite:
             check=True,
             capture_output=True,
         )
-        os.chdir(self.work_dir)
-        subprocess.run("cp -r alerting notifications", shell=True, check=True)
-        os.chdir(self.work_dir + "/" + "/notifications")
+        os.chdir(dependencies_dir)
+        if not (os.path.isdir('notifications')):
+            subprocess.run("cp -r alerting notifications", shell=True, check=True)
+        os.chdir(dependencies_dir + "/" + "notifications")
         subprocess.run(
             f"{deps_script} alerting {self.bundle_manifest.build.version}",
             shell=True,
@@ -83,7 +85,8 @@ class IntegTestSuite:
             cluster = LocalTestCluster(self.work_dir, self.bundle_manifest, security, self.s3_bucket_name)
             cluster.create_cluster()
             logging.info("component name: " + self.component.name)
-            os.chdir(self.work_dir)
+            dependencies_dir = os.path.join(self.work_dir, 'dependencies')
+            os.chdir(dependencies_dir)
             # TODO: (Create issue) Since plugins don't have integtest.sh in version branch, hardcoded it to main
             self._execute_integtest_sh('localhost', '9200', security)
         finally:
