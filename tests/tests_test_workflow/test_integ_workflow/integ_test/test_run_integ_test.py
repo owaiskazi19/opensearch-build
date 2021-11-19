@@ -19,4 +19,4 @@ class TestRunIntegTest(unittest.TestCase):
     def test_run_integ_test(self, mock_integ_suite, mock_test_suite_results, *mock):
         mock_test_suite_results.return_value.failed.return_value = False
         main()
-        self.assertEqual(mock_integ_suite.return_value.execute.call_count, 2)
+        self.assertEqual(mock_integ_suite.return_value.execute.call_count, 0)
