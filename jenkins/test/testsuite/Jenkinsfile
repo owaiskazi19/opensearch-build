@@ -18,6 +18,11 @@ pipeline {
                             parameters([
                                     string(
                                             defaultValue: '',
+                                            name: 'INPUT_MANIFEST',
+                                            trim: true
+                                    ),
+                                    string(
+                                            defaultValue: '',
                                             name: 'opensearch_version',
                                             trim: true
                                     ),
@@ -73,6 +78,7 @@ pipeline {
                         uploadArtifacts(
                             upload: true,
                             build_number: "${build_id}",
+                            manifest: "manifests/${INPUT_MANIFEST}",
                             job_name: "bundle-build",
                             dirs: ['test-results'], 
                             paths: ['test-results'],
@@ -113,7 +119,7 @@ pipeline {
                         message: 'Failed Build',
                         extra: stashed,
                         credentialsId: 'INTEG_TEST_WEBHOOK',
-                        variable: 'TOKEN'
+                        variable: "TOKEN"
                     )
 
                     cleanWs(

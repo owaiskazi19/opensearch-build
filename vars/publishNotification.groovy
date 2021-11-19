@@ -12,7 +12,7 @@ void call(Map args = [:]) {
             '-XPOST',
             '--header "Content-Type: application/json"',
             "--data '{\"result_text\":\"${text}\"}'",
-            "\"${args.variable}\""
+            "\$" + args.variable
         ].join(' '))
     }
 }
